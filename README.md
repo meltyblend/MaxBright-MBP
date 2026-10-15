@@ -39,6 +39,21 @@ While the panel is in EDR mode, macOS drops brightness-key presses or changes th
 
 Reading the brightness keys needs **Accessibility** permission. MaxBright asks the first time it launches. If you dismissed the request, use **Grant access…** in the menu, or turn on MaxBright under System Settings › Privacy & Security › Accessibility. `./build.sh install` clears the old grant because each rebuild needs to be approved again.
 
+### Terminal
+
+`./build.sh install` also puts a `maxbright` command on your PATH:
+
+| Command | Action |
+| --- | --- |
+| `maxbright` | Turn the boost on, starting MaxBright if needed |
+| `maxbright off` | Turn the boost off |
+| `maxbright toggle` | Switch the boost on or off |
+| `maxbright 60` | Set the boost to +60% and turn it on |
+| `maxbright status` | Show whether MaxBright is running and the current boost |
+| `maxbright quit` | Quit MaxBright, restoring the display |
+
+The command works by opening `maxbright://` links, which Shortcuts, Raycast, Alfred, or any script can open too: `maxbright://on`, `maxbright://off`, `maxbright://toggle`, `maxbright://boost/60`, `maxbright://quit`.
+
 ### Keyboard shortcuts
 
 These work from anywhere, with no permission needed:

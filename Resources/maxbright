@@ -1,0 +1,59 @@
+#!/bin/sh
+# maxbright: control MaxBright from the terminal. Starts the app in the background if it isn't running.
+
+usage() {
+    cat <<'EOF'
+usage: maxbright [on | off | toggle | <percent> | status | quit]
+
+  on         turn the boost on (the default)
+  off        turn the boost off
+  toggle     switch the boost on or off
+  <percent>  set the boost from 0 to 100 and turn it on, e.g. `maxbright 60`
+  status     show whether MaxBright is running and the current boost
+  quit       quit MaxBright, restoring the display
+EOF
+}
+
+# This script ships inside MaxBright.app/Contents/Resources; send commands to that copy of the app.
+app="$(cd "$(dirname "$(realpath "$0")")/../.." && pwd)"
+send() { open -g -a "$app" "maxbright://$1"; }
+
+command="${1:-on}"
+case "$command" in
+    on | off | toggle)
+        send "$command"
+        ;;
+    quit)
+        # Sending a link would launch MaxBright just to quit it, so check first.
+        if pgrep -x MaxBright >/dev/null; then
+            send quit
+        else
+            echo "MaxBright isn't running"
+        fi
+        ;;
+    status)
+        if pgrep -x MaxBright >/dev/null; then state="running"; else state="not running"; fi
+        enabled=$(defaults read io.github.maxbright enabled 2>/dev/null || echo 1)
+        boost=$(defaults read io.github.maxbright boost 2>/dev/null || echo 1.6)
+        percent=$(awk -v boost="$boost" 'BEGIN { printf "%d", (boost - 1) * 100 + 0.5 }')
+        if [ "$enabled" = 1 ]; then
+            echo "MaxBright is $state, boost on at +$percent%"
+        else
+            echo "MaxBright is $state, boost off (set to +$percent%)"
+        fi
+        ;;
+    -h | --help | help)
+        usage
+        ;;
+    *[!0-9]*)
+        usage >&2
+        exit 1
+        ;;
+    *)
+        if [ "$command" -gt 100 ]; then
+            echo "maxbright: the boost goes up to 100" >&2
+            exit 1
+        fi
+        send "boost/$command"
+        ;;
+esac

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Builds MaxBright.app into ./build. Pass "install" to also copy it to /Applications and launch it.
+# Builds MaxBright.app into ./build. Pass "install" to also copy it to /Applications, launch it, and put the
+# `maxbright` command on the PATH.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -12,6 +13,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/MaxBright"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+cp Resources/maxbright "$APP/Contents/Resources/maxbright"
+chmod +x "$APP/Contents/Resources/maxbright"
 codesign --force --sign - "$APP"
 echo "Built $APP"
 
@@ -24,4 +27,15 @@ if [[ "${1:-}" == "install" ]]; then
     tccutil reset Accessibility io.github.maxbright >/dev/null 2>&1 || true
     open /Applications/MaxBright.app
     echo "Installed to /Applications/MaxBright.app"
+
+    # Put the `maxbright` command on the PATH, linked into the installed app so it stays in step with it.
+    for dir in /usr/local/bin /opt/homebrew/bin "$HOME/.local/bin"; do
+        if [[ -d "$dir" && -w "$dir" && ":$PATH:" == *":$dir:"* ]]; then
+            ln -sf /Applications/MaxBright.app/Contents/Resources/maxbright "$dir/maxbright"
+            echo "Linked the maxbright command into $dir"
+            exit 0
+        fi
+    done
+    echo "To use the maxbright command, link it into a folder on your PATH:"
+    echo "  ln -s /Applications/MaxBright.app/Contents/Resources/maxbright /usr/local/bin/maxbright"
 fi

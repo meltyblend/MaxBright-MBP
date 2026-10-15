@@ -53,6 +53,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Handles the links the `maxbright` command sends: maxbright://on, maxbright://off, maxbright://toggle,
+    /// maxbright://boost/60 (percent above the standard maximum) and maxbright://quit. Shortcuts and launchers can
+    /// use them too.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        MainActor.assumeIsolated {
+            let controller = BrightnessController.shared
+            for url in urls where url.scheme == "maxbright" {
+                switch url.host {
+                case "quit":
+                    NSApp.terminate(nil)
+                    return
+                case "on":
+                    controller.isEnabled = true
+                case "off":
+                    controller.isEnabled = false
+                case "toggle":
+                    controller.isEnabled.toggle()
+                case "boost":
+                    guard let percent = Double(url.lastPathComponent) else { continue }
+                    controller.boost = 1 + percent / 100
+                    controller.isEnabled = true
+                default:
+                    continue
+                }
+                hud?.show()
+            }
+        }
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         MainActor.assumeIsolated { BrightnessController.shared.shutdown() }
     }
