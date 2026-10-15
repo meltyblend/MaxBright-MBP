@@ -68,3 +68,7 @@ When you turn the boost off or quit, the original gamma table is restored. If th
 ## Uninstall
 
 Quit MaxBright from its menu, then delete `/Applications/MaxBright.app`. To also clear its settings, run `defaults delete io.github.maxbright`.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
