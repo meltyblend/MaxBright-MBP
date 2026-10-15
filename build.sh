@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds MaxBright.app into ./build. Pass "install" to also copy it to /Applications, launch it, and put the
-# `maxbright` command on the PATH.
+# `maxbright` command on the PATH, or "release" to package it as build/MaxBright.zip for a GitHub release.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -17,6 +17,12 @@ cp Resources/maxbright "$APP/Contents/Resources/maxbright"
 chmod +x "$APP/Contents/Resources/maxbright"
 codesign --force --sign - "$APP"
 echo "Built $APP"
+
+if [[ "${1:-}" == "release" ]]; then
+    rm -f build/MaxBright.zip
+    ditto -c -k --keepParent "$APP" build/MaxBright.zip
+    echo "Packaged build/MaxBright.zip"
+fi
 
 if [[ "${1:-}" == "install" ]]; then
     pkill -x MaxBright 2>/dev/null && sleep 1 || true

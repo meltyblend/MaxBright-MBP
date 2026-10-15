@@ -6,13 +6,27 @@ A tiny menu bar app that unlocks the full brightness of a MacBook Pro's Liquid R
 
 - MacBook Pro with a Liquid Retina XDR display (M1–M4 Pro/Max, 14" or 16"), or another EDR-capable display
 - macOS 13 Ventura or later
-- Xcode or the Command Line Tools (`xcode-select --install`) to build
 
-## Build and install
+## Install
+
+Paste this into Terminal:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/meltyblend/MaxBright-MBP/main/install.sh | bash
+```
+
+It downloads the latest release, installs MaxBright to /Applications, adds the `maxbright` command and starts the app. Run it again to update.
+
+MaxBright isn't notarized by Apple. Installing through Terminal like this avoids the "can't be opened" warning that a browser download of an unnotarized app would trigger.
+
+## Build from source
+
+Requires Xcode or the Command Line Tools (`xcode-select --install`).
 
 ```sh
 ./build.sh            # builds build/MaxBright.app
-./build.sh install    # also copies it to /Applications and launches it
+./build.sh install    # also installs it to /Applications, adds the maxbright command and launches it
+./build.sh release    # packages build/MaxBright.zip for a GitHub release
 ```
 
 ## Using it
@@ -82,7 +96,11 @@ When you turn the boost off or quit, the original gamma table is restored. If th
 
 ## Uninstall
 
-Quit MaxBright from its menu, then delete `/Applications/MaxBright.app`. To also clear its settings, run `defaults delete io.github.maxbright`.
+```sh
+curl -fsSL https://raw.githubusercontent.com/meltyblend/MaxBright-MBP/main/install.sh | bash -s -- --uninstall
+```
+
+This quits MaxBright and removes the app, the `maxbright` command, its settings and its Accessibility permission.
 
 ## License
 
