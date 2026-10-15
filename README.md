@@ -5,7 +5,7 @@ A tiny menu bar app that unlocks the full brightness of a MacBook Pro's Liquid R
 ## Requirements
 
 - MacBook Pro with a Liquid Retina XDR display (M1–M4 Pro/Max, 14" or 16"), or another EDR-capable display
-- macOS 13 Ventura or later (only tested on Ventura so far)
+- macOS 13 Ventura or later* (only tested on Ventura so far)
 
 ## Install
 
