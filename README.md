@@ -19,16 +19,6 @@ It downloads the latest release, installs MaxBright to /Applications, adds the `
 
 MaxBright isn't notarized by Apple. Installing through Terminal like this avoids the "can't be opened" warning that a browser download of an unnotarized app would trigger.
 
-## Build from source
-
-Requires Xcode or the Command Line Tools (`xcode-select --install`).
-
-```sh
-./build.sh            # builds build/MaxBright.app
-./build.sh install    # also installs it to /Applications, adds the maxbright command and launches it
-./build.sh release    # packages build/MaxBright.zip for a GitHub release
-```
-
 ## Using it
 
 Click the sun icon in the menu bar:
@@ -51,11 +41,11 @@ A small indicator near the bottom of the screen shows the boost level and the re
 
 While the panel is in EDR mode, macOS drops brightness-key presses or changes the setting without dimming the screen. EDR mode includes the several seconds the panel takes to leave it after the boost turns off, and any time other HDR content is on screen. In that state MaxBright applies the brightness step itself, and the indicator shows the regular brightness level.
 
-Reading the brightness keys needs **Accessibility** permission. MaxBright asks the first time it launches. If you dismissed the request, use **Grant access…** in the menu, or turn on MaxBright under System Settings › Privacy & Security › Accessibility. `./build.sh install` clears the old grant because each rebuild needs to be approved again.
+Reading the brightness keys needs **Accessibility** permission. MaxBright asks the first time it launches. If you dismissed the request, use **Grant access…** in the menu, or turn on MaxBright under System Settings › Privacy & Security › Accessibility. After each update, approve it again when asked.
 
 ### Terminal
 
-`./build.sh install` also puts a `maxbright` command on your PATH:
+The installer also adds a `maxbright` command:
 
 | Command | Action |
 | --- | --- |
@@ -101,6 +91,24 @@ curl -fsSL https://raw.githubusercontent.com/meltyblend/MaxBright-MBP/main/insta
 ```
 
 This quits MaxBright and removes the app, the `maxbright` command, its settings and its Accessibility permission.
+
+## Building from source
+
+You only need this to change MaxBright or publish a release. It requires Xcode or the Command Line Tools (`xcode-select --install`).
+
+```sh
+./build.sh            # builds build/MaxBright.app
+./build.sh install    # also installs it to /Applications, adds the maxbright command and launches it
+./build.sh release    # packages build/MaxBright.zip for a GitHub release
+```
+
+To publish an update:
+
+1. Bump `CFBundleShortVersionString` in `Resources/Info.plist`.
+2. Run `./build.sh release`.
+3. Run `gh release create v1.1 build/MaxBright.zip`.
+
+The installer always fetches the newest release.
 
 ## License
 
